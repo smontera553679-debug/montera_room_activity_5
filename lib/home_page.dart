@@ -55,7 +55,7 @@ class HomePage extends StatelessWidget {
                   leading: Icon(Icons.share),
                   title: Text('Social Media'),
                   subtitle: Text(
-                    'View your sample social accounts.',
+                    'View posts, like, and comment.',
                   ),
                 ),
               ],
