@@ -4,112 +4,71 @@ import 'post.dart';
 class CreatePostSheet extends StatefulWidget {
   final String username;
 
-  const CreatePostSheet({
-    super.key,
-    required this.username,
-  });
+  const CreatePostSheet({super.key, required this.username});
 
   @override
-  State<CreatePostSheet> createState() =>
-      _CreatePostSheetState();
+  State<CreatePostSheet> createState() => _CreatePostSheetState();
 }
 
 class _CreatePostSheetState extends State<CreatePostSheet> {
-  final TextEditingController _captionController =
-      TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  final contentController = TextEditingController();
 
-  final TextEditingController _imageController =
-      TextEditingController();
+  void submit() {
+    if (!formKey.currentState!.validate()) return;
 
-  void submitPost() {
-    final String caption = _captionController.text.trim();
-    final String imageUrl = _imageController.text.trim();
-
-    if (caption.isEmpty || imageUrl.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Complete both fields before submitting!',
-          ),
-        ),
-      );
-      return;
-    }
-
-    final uri = Uri.tryParse(imageUrl);
-
-    if (uri == null ||
-        !uri.hasAuthority ||
-        (uri.scheme != 'https' && uri.scheme != 'http')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Enter a valid HTTP or HTTPS image URL.'),
-        ),
-      );
-      return;
-    }
-
-    final Post newPost = Post(
-      username: widget.username,
-      caption: caption,
-      imageUrl: imageUrl,
+    Navigator.of(context).pop(
+      Post(
+        username: widget.username,
+        content: contentController.text.trim(),
+      ),
     );
-
-    Navigator.pop(context, newPost);
   }
 
   @override
   void dispose() {
-    _captionController.dispose();
-    _imageController.dispose();
+    contentController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-        ),
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 24,
+        right: 24,
+        top: 24,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
+      child: Form(
+        key: formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
+            Text(
               'Create Post',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _captionController,
-              maxLines: 3,
+            const SizedBox(height: 4),
+            Text('Posting as ${widget.username}'),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: contentController,
+              maxLines: 4,
+              autofocus: true,
               decoration: const InputDecoration(
-                labelText: 'Caption',
-                prefixIcon: Icon(Icons.edit),
+                labelText: "What's on your mind?",
                 border: OutlineInputBorder(),
               ),
+              validator: (value) => value == null || value.trim().isEmpty
+                  ? 'Write something to post.'
+                  : null,
             ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _imageController,
-              keyboardType: TextInputType.url,
-              decoration: const InputDecoration(
-                labelText: 'Image URL',
-                prefixIcon: Icon(Icons.image),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: submitPost,
-              child: const Text('Submit Post'),
+              onPressed: submit,
+              child: const Text('Post'),
             ),
           ],
         ),

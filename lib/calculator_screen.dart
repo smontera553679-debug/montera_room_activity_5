@@ -15,7 +15,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   String operationLabel = 'Enter two numbers';
 
   String formatNumber(double value) {
-    if (value == value.roundToDouble()) return value.toInt().toString();
+    if (value == value.roundToDouble()) return value.toStringAsFixed(1);
     return value
         .toStringAsFixed(6)
         .replaceFirst(RegExp(r'0+$'), '')
