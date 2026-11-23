@@ -17,14 +17,25 @@ class SocialMediaPage extends StatefulWidget {
 }
 
 class _SocialMediaPageState extends State<SocialMediaPage> {
-  final List<Post> posts = [];
+  final List<Post> posts = [
+    const Post(
+      username: 'JohnDoe',
+      caption: 'Enjoying the sunny weather!',
+      imageUrl: 'https://picsum.photos/id/20/600/400',
+    ),
+    const Post(
+      username: 'JaneSmith',
+      caption: 'Just finished a great book!',
+      imageUrl: 'https://picsum.photos/id/24/600/400',
+    ),
+  ];
 
-  Future<void> createPost() async {
+  Future<void> openCreatePostSheet() async {
     final Post? newPost = await showModalBottomSheet<Post>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (context) {
+      builder: (BuildContext context) {
         return CreatePostSheet(
           username: widget.username,
         );
@@ -44,23 +55,28 @@ class _SocialMediaPageState extends State<SocialMediaPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Social'),
+        title: const Text('Social Media'),
       ),
       body: posts.isEmpty
           ? const Center(
-              child: Text('No posts yet. Tap + to create one.'),
+              child: Text('No posts yet. Create one!'),
             )
           : ListView.builder(
+              padding: const EdgeInsets.all(12),
               itemCount: posts.length,
               itemBuilder: (context, index) {
+                final post = posts[index];
+
                 return PostCard(
-                  key: ObjectKey(posts[index]),
-                  post: posts[index],
+                  key: ObjectKey(post),
+                  post: post,
                 );
               },
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: createPost,
+        onPressed: openCreatePostSheet,
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
         tooltip: 'Create Post',
         child: const Icon(Icons.add),
       ),
